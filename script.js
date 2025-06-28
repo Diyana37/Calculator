@@ -3,6 +3,7 @@ let secondOperand = "";
 let operator = "";
 let operators = [];
 const equal = document.querySelector("#equal");
+const input = document.querySelector("#input");
 
 function setInputValue(value) {
   const input = document.querySelector(".calc-numbers");
@@ -15,6 +16,13 @@ function clear() {
   operator = "";
   operators = [];
   setInputValue("0");
+}
+
+function deleteSymbol() {
+  let equation = [...input.value.toString()];
+  equation = equation.filter((item) => item != ' ');
+  equation.pop();
+  setInputValue(equation.join(''));
 }
 
 function clickNumbers(id) {
@@ -47,6 +55,7 @@ function calculate() {
       break;
     case "x":
       result = Number(firstOperand) * Number(secondOperand);
+      break;
     default:
       break;
   }
@@ -82,6 +91,7 @@ function calculateOperators() {
       break;
     case "x":
       result = Number(firstOperand) * Number(secondOperand);
+      break;
     default:
       break;
   }
@@ -188,6 +198,9 @@ function attachClickEventToCalculatorButtons() {
 
       if (id === "clear") {
         clear();
+      }
+      if (id === "delete") {
+        deleteSymbol();
       }
 
       controlEqualState();
