@@ -1,6 +1,8 @@
 let firstOperand = "";
 let secondOperand = "";
 let operator = "";
+let operators = [];
+const equal = document.querySelector("#equal");
 
 function setInputValue(value) {
   const input = document.querySelector(".calc-numbers");
@@ -11,6 +13,7 @@ function clear() {
   firstOperand = "";
   secondOperand = "";
   operator = "";
+  operators = [];
   setInputValue("0");
 }
 
@@ -51,40 +54,104 @@ function calculate() {
   return result;
 }
 
+function calculateOperators() {
+  let result;
+  let localOperator;
+  const lastOperator = operators.pop();
+  const beforeLastOperator = operators.pop();
+
+  if (lastOperator === beforeLastOperator) {
+    localOperator = lastOperator;
+  } else {
+    localOperator = beforeLastOperator;
+  }
+
+  switch (localOperator) {
+    case "+":
+      result = Number(firstOperand) + Number(secondOperand);
+      break;
+    case "-":
+      result = Number(firstOperand) - Number(secondOperand);
+      break;
+    case "/":
+      if (Number(secondOperand) === 0) {
+        alert("You cannot divide by zero!");
+      } else {
+        result = Number(firstOperand) / Number(secondOperand);
+      }
+      break;
+    case "x":
+      result = Number(firstOperand) * Number(secondOperand);
+    default:
+      break;
+  }
+
+  return result;
+}
+
+function performOperations(equation) {
+  if (firstOperand && secondOperand) {
+    let result = calculateOperators();
+
+    if (result) {
+      firstOperand = result;
+      secondOperand = "";
+      equation = `${firstOperand} ${operator}`;
+      operators.push(operator);
+      setInputValue(equation);
+    }
+  } else {
+    equation = `${firstOperand} ${operator}`;
+    setInputValue(equation);
+  }
+}
+
 function clickOperators(id) {
   let equation;
+
   switch (id) {
     case "plus":
       operator = "+";
-      equation = `${firstOperand} ${operator}`;
-      setInputValue(equation);
+      operators.push(operator);
+      performOperations(equation);
       break;
     case "minus":
       operator = "-";
-      equation = `${firstOperand} ${operator}`;
-      setInputValue(equation);
+      operators.push(operator);
+      performOperations(equation);
       break;
     case "division":
       operator = "/";
-      equation = `${firstOperand} ${operator}`;
-      setInputValue(equation);
+      operators.push(operator);
+      performOperations(equation);
       break;
     case "multiply":
       operator = "x";
-      equation = `${firstOperand} ${operator}`;
-      setInputValue(equation);
+      operators.push(operator);
+      performOperations(equation);
       break;
     case "equal":
       let result = calculate();
-      
+
       if (result) {
-        equation = `${firstOperand} ${operator} ${secondOperand} = ${result}`;
-        setInputValue(equation);
+        setInputValue(result);
+        firstOperand = result;
+        secondOperand = "";
+        operator = "";
+        operators = [];
       }
       break;
     default:
       break;
   }
+}
+
+function controlEqualState() {
+  if (firstOperand && secondOperand) {
+        equal.disabled = false;
+      } else {
+        equal.disabled = true;
+      }
 }
 
 function attachClickEventToCalculatorButtons() {
@@ -95,6 +162,8 @@ function attachClickEventToCalculatorButtons() {
       const target = e.target;
       const id = target.getAttribute("id");
       clickNumbers(id);
+
+      controlEqualState();
     });
   });
 
@@ -105,6 +174,8 @@ function attachClickEventToCalculatorButtons() {
       const target = e.target;
       const id = target.getAttribute("id");
       clickOperators(id);
+
+      controlEqualState();
     });
   });
 
@@ -118,6 +189,8 @@ function attachClickEventToCalculatorButtons() {
       if (id === "clear") {
         clear();
       }
+
+      controlEqualState();
     });
   });
 }
