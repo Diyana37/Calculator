@@ -19,10 +19,19 @@ function clear() {
 }
 
 function deleteSymbol() {
-  let equation = [...input.value.toString()];
-  equation = equation.filter((item) => item != ' ');
-  equation.pop();
-  setInputValue(equation.join(''));
+  if (secondOperand) {
+    secondOperand = secondOperand.slice(0, -1);
+
+    setInputValue(
+      `${firstOperand} ${operator}${secondOperand ? ` ${secondOperand}` : ""}`
+    );
+  } else if (operator) {
+    operator = "";
+    setInputValue(`${firstOperand}`);
+  } else {
+    firstOperand = firstOperand.slice(0, -1);
+    setInputValue(`${firstOperand ? `${firstOperand}` : "0"}`);
+  }
 }
 
 function clickNumbers(id) {
@@ -144,8 +153,8 @@ function clickOperators(id) {
       let result = calculate();
 
       if (result) {
-        setInputValue(result);
-        firstOperand = result;
+        setInputValue(result.toString());
+        firstOperand = result.toString();
         secondOperand = "";
         operator = "";
         operators = [];
@@ -158,10 +167,10 @@ function clickOperators(id) {
 
 function controlEqualState() {
   if (firstOperand && secondOperand) {
-        equal.disabled = false;
-      } else {
-        equal.disabled = true;
-      }
+    equal.disabled = false;
+  } else {
+    equal.disabled = true;
+  }
 }
 
 function attachClickEventToCalculatorButtons() {
@@ -199,6 +208,7 @@ function attachClickEventToCalculatorButtons() {
       if (id === "clear") {
         clear();
       }
+
       if (id === "delete") {
         deleteSymbol();
       }
