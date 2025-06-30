@@ -2,8 +2,10 @@ let firstOperand = "";
 let secondOperand = "";
 let operator = "";
 let operators = [];
+
 const equal = document.querySelector("#equal");
 const input = document.querySelector("#input");
+const decimalSeparator = document.querySelector("#decimal-separator");
 
 function setInputValue(value) {
   const input = document.querySelector(".calc-numbers");
@@ -41,6 +43,17 @@ function clickNumbers(id) {
     setInputValue(equation);
   } else {
     firstOperand += id;
+    setInputValue(firstOperand);
+  }
+}
+
+function clickDecimalSeparator() {
+  if (operator) {
+    secondOperand += ".";
+    let equation = `${firstOperand} ${operator} ${secondOperand}`;
+    setInputValue(equation);
+  } else {
+    firstOperand += ".";
     setInputValue(firstOperand);
   }
 }
@@ -160,6 +173,9 @@ function clickOperators(id) {
         operators = [];
       }
       break;
+    case "decimal-separator":
+      clickDecimalSeparator();
+      break;
     default:
       break;
   }
@@ -173,6 +189,22 @@ function controlEqualState() {
   }
 }
 
+function controlDecimalSeparatorState() {
+  if(operator) {
+    if(!secondOperand || secondOperand.includes(".")) {
+      decimalSeparator.disabled = true;
+    } else {
+      decimalSeparator.disabled = false;
+    }
+  } else {
+    if(!firstOperand || firstOperand.includes(".")) {
+      decimalSeparator.disabled = true;
+    } else {
+      decimalSeparator.disabled = false;
+    }
+  }
+}
+
 function attachClickEventToCalculatorButtons() {
   const numbers = Array.from(document.querySelectorAll(".number"));
 
@@ -183,6 +215,7 @@ function attachClickEventToCalculatorButtons() {
       clickNumbers(id);
 
       controlEqualState();
+      controlDecimalSeparatorState();
     });
   });
 
@@ -195,6 +228,7 @@ function attachClickEventToCalculatorButtons() {
       clickOperators(id);
 
       controlEqualState();
+      controlDecimalSeparatorState();
     });
   });
 
@@ -214,6 +248,7 @@ function attachClickEventToCalculatorButtons() {
       }
 
       controlEqualState();
+      controlDecimalSeparatorState();
     });
   });
 }
